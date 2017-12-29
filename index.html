@@ -1,0 +1,56 @@
+<html>
+<head>
+	<title>IO Server</title>
+	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+<body>
+
+Light up a pin:
+<form method="POST" action="/output">
+	<input type="hidden" name="html" value="1">
+	<button type="submit" name="address" value="0">0</button>
+	<button type="submit" name="address" value="1">1</button>
+	<button type="submit" name="address" value="2">2</button>
+	<button type="submit" name="address" value="3">3</button>
+	<button type="submit" name="address" value="4">4</button>
+	<button type="submit" name="address" value="5">5</button>
+	<button type="submit" name="address" value="6">6</button>
+	<button type="submit" name="address" value="7">7</button>
+</form>
+
+
+<hr/>
+<pre id="output">
+</pre>
+
+
+<script>
+
+var subscribe = function(callback) {
+	var longPoll = function() {
+		$.ajax({
+			method: 'GET',
+			url: '/messages',
+			success: function(data) {
+				callback(data);
+			},
+			complete: function() {
+				longPoll();
+			},
+			timeout: 30000
+		});
+	};
+	longPoll();
+}
+
+var receiveMessage = function(msgData) {
+	$('#output').text(JSON.stringify(msgData));
+};
+
+subscribe(receiveMessage);
+
+</script>
+
+
+</body>
+</html>
